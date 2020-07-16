@@ -71,7 +71,56 @@ def create_trip(request):
         return redirect('/dashboard')
     return redirect('/trips/new')
 
+def edit_trip(request, id):
+    if 'uid' not in request.session:
+        return redirect('/')
+    else:
+        context={
+            'edit_trip': Trip.objects.get(id=id),
+        }
+        
+        return render(request, 'edit.html', context)
 
+
+# update trip
+def update(request, id):
+    if 'uid' not in request.session:
+        return redirect('/')
+    else:
+        errors = Trip.objects.trip_validator(request.POST)
+        if len(errors) > 0:
+            str_id=str(id)
+            for key, value in errors.items():
+                messages.error(request, value)
+            return redirect(f'/trips/edit/{str_id}')
+        else:
+            str_id=str(id)
+            edit_trip=Trip.objects.get(id=id)
+            edit_trip.location=request.POST['location']
+            edit_trip.desc=request.POST['desc']
+            edit_trip.seats=request.POST['seats']
+            edit_trip.save()
+        
+        return redirect('/dashboard')
+        
+    return redirect('/dashboard')
+
+def view_trip(request, id):
+    if 'uid' not in request.session:
+        return redirect('/')
+    else:
+        context = {
+            'viewed_trip' : Trip.objects.get(id=id)
+        }
+        return render(request, 'one_trip.html', context)
+#delete wish
+def destroy(request, id):
+    if 'uid' not in request.session:
+        return redirect('/')
+    else:
+        Trip.objects.get(id=id).delete()
+        return redirect('/dashboard')
+    
 # log out 
 def log_out(request):
     request.session.clear()
