@@ -53,3 +53,54 @@ label {
     border-radius: 10px;
     margin: 50px auto;
 }
+
+figure {
+    display: inline-block;
+}
+
+.trip {
+    border-radius: 5px;
+    padding: 16px;
+    margin: 16px 0
+}
+
+.trip::after {
+    content: "";
+    clear: both;
+    display: table;
+}
+
+.trip img {
+    float: left;
+    margin-right: 20px;
+    border-radius: 50%;
+}
+
+.trip p {
+    font-size: 15px;
+    margin-right: 15px;
+}
+
+@media (max-width: 500px) {
+    .trip {
+        text-align: center;
+    }
+    .trip img {
+        margin: auto;
+        float: none;
+        display: block;
+    }
+}
+
+.comments {
+    padding: 10px;
+    background: linear-gradient(#ccc, #eee);
+    border-radius: 10px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.comments span {
+    font-size: 10px;
+    float: right;
+}

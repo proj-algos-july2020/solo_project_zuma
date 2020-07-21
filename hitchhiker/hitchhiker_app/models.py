@@ -1,6 +1,4 @@
-from django.db import models
 
-# Create your models here.
 from django.db import models
 import re
 from datetime import datetime, date
@@ -56,6 +54,26 @@ class Trip(models.Model):
     seats = models.IntegerField(default=1, validators=[MaxValueValidator(7), MinValueValidator(1)])
     desc = models.TextField()
     posted_by = models.ForeignKey(User, related_name='has_trips', on_delete=models.CASCADE)
+    reserve_seat = models.BooleanField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     objects = TripManager()
+    
+    
+class CommentManager(models.Manager):
+    def comment_validator(self, postData):
+        errors = {}
+        
+        if len(postData['comment']) < 5:
+            errors["comment"] = "Comment should be at least 5 characters"        
+        return errors 
+    
+    
+class Comment(models.Model):
+    comment=models.CharField(max_length=255)
+    poster=models.ForeignKey(User, related_name='comments', on_delete=models.CASCADE)
+    trip= models.ForeignKey(Trip, related_name='comments', on_delete=models.CASCADE)
+    liked_by = models.ManyToManyField(User, related_name="liked_comments")
+    created_at=models.DateTimeField(auto_now_add=True)
+    updated_at=models.DateTimeField(auto_now=True)
+    objects = CommentManager()

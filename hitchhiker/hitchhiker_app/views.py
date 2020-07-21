@@ -77,6 +77,7 @@ def edit_trip(request, id):
     else:
         context={
             'edit_trip': Trip.objects.get(id=id),
+            'logged_user': User.objects.get(id=request.session['uid']),
         }
         
         return render(request, 'edit.html', context)
@@ -110,9 +111,40 @@ def view_trip(request, id):
         return redirect('/')
     else:
         context = {
-            'viewed_trip' : Trip.objects.get(id=id)
+            'viewed_trip' : Trip.objects.get(id=id),
+            'logged_user': User.objects.get(id=request.session['uid']),
+            'all_comments': Comment.objects.all()
         }
         return render(request, 'one_trip.html', context)
+
+    
+def reserve_seat(request, id):
+    if 'uid' not in request.session:
+        return redirect('/')
+    else:
+        trip=Trip.objects.get(id=id)
+        trip.seats -=1
+        trip.save()
+        
+        return redirect('/dashboard')
+        
+def add_comment(request, trip_id):
+    errors = Comment.objects.comment_validator(request.POST)
+    if len(errors) > 0:
+        str_id=str(trip_id)
+        for key, value in errors.items():
+            messages.error(request, value)
+        return redirect(f'/trips/{str_id}')
+    else:
+        str_id=str(trip_id)
+        new_comment = Comment.objects.create(comment = request.POST['comment'], 
+                                             poster = User.objects.get(id=request.session['uid']),
+                                             trip = Trip.objects.get(id=trip_id))
+        return redirect(f'/trips/{str_id}')
+    return redirect('/trips/{str_id}')
+
+
+
 #delete wish
 def destroy(request, id):
     if 'uid' not in request.session:

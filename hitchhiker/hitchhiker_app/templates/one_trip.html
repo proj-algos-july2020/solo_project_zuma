@@ -9,7 +9,7 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
 
-    <title>Edit trip</title>
+    <title>Trip's info</title>
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 
@@ -26,7 +26,7 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav mr-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Let's edit your trip</a>
+                        <a class="nav-link" href="/trips/new">Add a new trip</a>
                     </li>
 
 
@@ -35,15 +35,57 @@
                     <a href="/log_out" class="nav-link text-secondary">Log out</a>
 
                 </p>
+                <p class=" my-2 my-lg-0">
+                    <a href="/dashboard" class="nav-link text-secondary">Dashboard</a>
+
+                </p>
             </div>
         </nav>
 
         <div class="container">
             <div class="card">
                 <div class="body">
-                    <p>Location: {{viewed_trip.location}}</p>
+                    <div class="row">
+                        <div class="col-md-6 trip">
+                            <img alt="picture" src="{% static 'img/user.jpg' %}" class="img-fluid w-25" />
+
+                            <p><strong>Location: </strong> {{viewed_trip.location}}</p>
+                            <p><strong>Seats: </strong>{{viewed_trip.seats}}</p>
+                            <p><strong>Description: </strong> {{viewed_trip.desc}}</p>
+                            <small class="text-danger"> ~ {{logged_user.first_name}} {{logged_user.last_name}}</small>
+
+
+
+                        </div>
+                        <div class="col-md-6 ">
+                            {% if messages %}
+                            <ul class="messages">
+                                {% for message in messages %}
+                                <li {% if message.tags %} class="{{ message.tags }} text-danger" {% endif %}>{{ message }}</li>
+                                {% endfor %}
+                            </ul>
+                            {% endif %}
+                            <h4>Comments: </h4>
+                            <hr class="mb-3"> {% for com in viewed_trip.comments.all %}
+                            <div class="comments">
+                                <span>{{com.created_at}}</span>
+                                <h4>{{com.poster.first_name}} {{com.poster.last_name}}</h4>
+                                <p>{{com.comment}}</p>
+
+
+                            </div>
+                            {% endfor %}
+                            <form method="POST" action="/trips/add_comment/{{viewed_trip.id}}">
+                                {% csrf_token %}
+
+                                <input type="text" name="comment" class="form-control">
+                                <button type="submit" class="btn btn-secondary mt-2">Add a comment</button>
+                            </form>
+                        </div>
+                    </div>
+                    <!-- <p>Location: {{viewed_trip.location}}</p>
                     <p>Seats: {{viewed_trip.seats}}</p>
-                    <p>Description: {{viewed_trip.desc}}</p>
+                    <p>Description: {{viewed_trip.desc}}</p> -->
 
                 </div>
             </div>
