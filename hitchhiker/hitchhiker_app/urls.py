@@ -14,6 +14,5 @@ urlpatterns = [
     path('trips/<int:id>/delete', views.destroy),
     path('trips/edit/<int:id>', views.edit_trip),
     path('trips/update/<int:id>', views.update),
-    # path('trips/grant/<int:trip_id>', views.grant),
     path('log_out', views.log_out),
 ]

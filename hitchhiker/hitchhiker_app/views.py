@@ -145,7 +145,7 @@ def add_comment(request, trip_id):
 
 
 
-#delete wish
+#delete 
 def destroy(request, id):
     if 'uid' not in request.session:
         return redirect('/')
